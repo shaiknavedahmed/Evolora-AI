@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 
     # MongoDB
     MONGODB_URL: str = "mongodb://localhost:27017"
-    MONGODB_DB_NAME: str = "evolora"
+    MONGODB_DB_NAME: str = "Evolora"
 
     # Auth / JWT
     SECRET_KEY: str = "change-me-in-production-use-a-real-secret"

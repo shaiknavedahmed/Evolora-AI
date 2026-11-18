@@ -44,6 +44,27 @@ async def connect_to_mongo():
             serverSelectionTimeoutMS=5000,
         )
 
+        # 1. Determine target db name: check if URL contains a database in its path
+        import urllib.parse
+        target_db_name = settings.MONGODB_DB_NAME
+        try:
+            parsed = urllib.parse.urlparse(target_url)
+            path_db = parsed.path.lstrip("/").split("?")[0].strip()
+            if path_db:
+                target_db_name = path_db
+        except Exception:
+            pass
+
+        # 2. Prevent MongoDB error 13297 (DatabaseDifferCase) by matching existing DB case
+        try:
+            existing_dbs = await client.list_database_names()
+            for existing in existing_dbs:
+                if existing.lower() == target_db_name.lower():
+                    target_db_name = existing
+                    break
+        except Exception as list_err:
+            logger.debug(f"Could not list database names (continuing with '{target_db_name}'): {list_err}")
+
         # Import all document models
         from app.models.user import User
         from app.models.job_target import JobTarget
@@ -55,7 +76,7 @@ async def connect_to_mongo():
         from app.models.resume import Resume
 
         await init_beanie(
-            database=client[settings.MONGODB_DB_NAME],
+            database=client[target_db_name],
             document_models=[
                 User,
                 JobTarget,
@@ -69,7 +90,7 @@ async def connect_to_mongo():
         )
         is_mongo_connected = True
         mongo_error_message = ""
-        logger.info("MongoDB connection established and Beanie initialized.")
+        logger.info(f"MongoDB connection established on database '{target_db_name}' and Beanie initialized.")
     except Exception as exc:
         is_mongo_connected = False
         mongo_error_message = f"Failed to connect to MongoDB: {exc}"

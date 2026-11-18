@@ -21,10 +21,14 @@ export default function LoginPage() {
       await login(email, password);
       showToast("success", "Welcome back.");
     } catch (err: unknown) {
-      const message =
-        err && typeof err === "object" && "detail" in err
-          ? String((err as { detail: string }).detail)
-          : "Invalid email or password.";
+      let message = "Invalid email or password.";
+      if (err && typeof err === "object") {
+        if ("detail" in err && (err as { detail: unknown }).detail) {
+          message = String((err as { detail: unknown }).detail);
+        } else if ("message" in err && (err as { message: unknown }).message) {
+          message = String((err as { message: unknown }).message);
+        }
+      }
       showToast("error", message);
     } finally {
       setLoading(false);

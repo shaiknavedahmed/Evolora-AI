@@ -26,10 +26,14 @@ export default function RegisterPage() {
       await register(name, email, password);
       showToast("success", "Account created. You're in.");
     } catch (err: unknown) {
-      const message =
-        err && typeof err === "object" && "detail" in err
-          ? String((err as { detail: string }).detail)
-          : "Registration failed. Try again.";
+      let message = "Registration failed. Try again.";
+      if (err && typeof err === "object") {
+        if ("detail" in err && (err as { detail: unknown }).detail) {
+          message = String((err as { detail: unknown }).detail);
+        } else if ("message" in err && (err as { message: unknown }).message) {
+          message = String((err as { message: unknown }).message);
+        }
+      }
       showToast("error", message);
     } finally {
       setLoading(false);

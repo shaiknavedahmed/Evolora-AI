@@ -36,8 +36,12 @@ async def register(payload: RegisterRequest):
             detail=db.mongo_error_message or "Database is disconnected. Set valid MONGODB_URL in environment.",
         )
 
+    # Normalize email and name
+    clean_email = str(payload.email).strip().lower()
+    clean_name = payload.name.strip()
+
     # Check if email already taken
-    existing = await User.find_one(User.email == payload.email)
+    existing = await User.find_one(User.email == clean_email)
     if existing:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -46,8 +50,8 @@ async def register(payload: RegisterRequest):
 
     # Create user
     user = User(
-        email=payload.email,
-        name=payload.name,
+        email=clean_email,
+        name=clean_name,
         hashed_password=hash_password(payload.password),
     )
     await user.insert()
@@ -74,7 +78,8 @@ async def login(payload: LoginRequest):
             detail=db.mongo_error_message or "Database is disconnected. Set valid MONGODB_URL in environment.",
         )
 
-    user = await User.find_one(User.email == payload.email)
+    clean_email = str(payload.email).strip().lower()
+    user = await User.find_one(User.email == clean_email)
     if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
