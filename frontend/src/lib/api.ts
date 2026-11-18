@@ -18,13 +18,16 @@ function getApiBaseUrl(): string {
     return url;
   }
 
-  // If running in browser and NOT on localhost (e.g. on Vercel evolora-ai.vercel.app),
-  // automatically point to your live Render backend so it works without manual env setup!
-  if (
-    typeof window !== "undefined" &&
-    window.location.hostname !== "localhost" &&
-    window.location.hostname !== "127.0.0.1"
-  ) {
+  // In the browser, automatically use the live Render backend if on Vercel or any live host
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") {
+      return PRODUCTION_BACKEND_URL;
+    }
+  }
+
+  // In production builds (like Next.js build on Vercel), default to production Render URL
+  if (process.env.NODE_ENV === "production") {
     return PRODUCTION_BACKEND_URL;
   }
 
@@ -46,10 +49,17 @@ interface ApiError {
 }
 
 class ApiClient {
-  private baseUrl: string;
+  private customBaseUrl?: string;
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl?: string) {
+    if (baseUrl && !baseUrl.includes("localhost")) {
+      this.customBaseUrl = baseUrl;
+    }
+  }
+
+  private getBaseUrl(): string {
+    if (this.customBaseUrl) return this.customBaseUrl;
+    return getApiBaseUrl();
   }
 
   private getToken(): string | null {
@@ -73,6 +83,7 @@ class ApiClient {
     const { method = "GET", body, headers = {}, token } = options;
 
     const authToken = token || this.getToken();
+    const activeBaseUrl = this.getBaseUrl();
 
     const fetchHeaders: Record<string, string> = {
       "Content-Type": "application/json",
@@ -85,7 +96,7 @@ class ApiClient {
 
     let response: Response;
     try {
-      response = await fetch(`${this.baseUrl}${endpoint}`, {
+      response = await fetch(`${activeBaseUrl}${endpoint}`, {
         method,
         headers: fetchHeaders,
         body: body ? JSON.stringify(body) : undefined,
@@ -95,15 +106,15 @@ class ApiClient {
       const isMixedContent =
         isBrowser &&
         window.location.protocol === "https:" &&
-        this.baseUrl.startsWith("http:");
+        activeBaseUrl.startsWith("http:");
 
       let detail = "Unable to connect to the server.";
       if (isMixedContent) {
         detail = "Security block: HTTPS site cannot call an insecure HTTP backend. Ensure your backend URL starts with https://.";
-      } else if (isBrowser && (!process.env.NEXT_PUBLIC_API_URL || this.baseUrl.includes("localhost"))) {
+      } else if (isBrowser && (!process.env.NEXT_PUBLIC_API_URL || activeBaseUrl.includes("localhost"))) {
         detail = "NEXT_PUBLIC_API_URL is missing or pointing to localhost. Please set NEXT_PUBLIC_API_URL in Vercel settings and redeploy.";
       } else {
-        detail = `Failed to connect to backend (${this.baseUrl}). Verify backend is running and CORS is configured.`;
+        detail = `Failed to connect to backend (${activeBaseUrl}). Verify backend is running and CORS is configured.`;
       }
 
       const error: ApiError = {
