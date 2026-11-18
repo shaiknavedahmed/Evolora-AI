@@ -57,6 +57,10 @@ class ApiClient {
     }
   }
 
+  get baseUrl(): string {
+    return this.getBaseUrl();
+  }
+
   private getBaseUrl(): string {
     if (this.customBaseUrl) return this.customBaseUrl;
     return getApiBaseUrl();
