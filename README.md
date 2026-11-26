@@ -163,6 +163,12 @@ npm run dev
 - **Database**: Hosted on [MongoDB Atlas](https://www.mongodb.com/atlas) (Network Access: `0.0.0.0/0`)
 
 ---
+## 📖 Project Blog
+
+Read our complete project documentation and development journey:
+
+[Read Our Capstone Project Blog]https://medium.com/@sknavedahmed/we-built-an-ai-interviewer-heres-what-made-it-trustworthy-9007495186cc
+
 
 ## 👨‍💻 Author
 
