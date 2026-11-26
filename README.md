@@ -8,9 +8,17 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org/)
 
-🔗 **Live App**: [https://evolora-ai.vercel.app](https://evolora-ai.vercel.app)  
-📖 **API Swagger Docs**: [https://evolora-ai.onrender.com/docs](https://evolora-ai.onrender.com/docs)  
-🩺 **Backend Health**: [https://evolora-ai.onrender.com/health](https://evolora-ai.onrender.com/health)
+
+🌐 **Live Deployment**
+
+- **Backend (Render):** https://evolora-ai.onrender.com/
+- **Frontend (Vercel):** https://evolora-ai.vercel.app/
+
+**Important:** Start the Render backend first and wait until it becomes active. Then open the Vercel frontend to use the application.
+
+📖 **API Swagger Documentation:** https://evolora-ai.onrender.com/docs
+
+🩺 **Backend Health Check:** https://evolora-ai.onrender.com/health
 
 ---
 
@@ -163,17 +171,28 @@ npm run dev
 - **Database**: Hosted on [MongoDB Atlas](https://www.mongodb.com/atlas) (Network Access: `0.0.0.0/0`)
 
 ---
+
 ## 📖 Project Blog
 
 Read our complete project documentation and development journey:
 
-[Read Our Capstone Project Blog]https://medium.com/@sknavedahmed/we-built-an-ai-interviewer-heres-what-made-it-trustworthy-9007495186cc
+[Read Our Capstone Project Blog](https://medium.com/@sknavedahmed/we-built-an-ai-interviewer-heres-what-made-it-trustworthy-9007495186cc)
 
 
-## 👨‍💻 Author
+---
+
+## 👥 Team Members
 
 - **Shaik Naved Ahmed** — [GitHub](https://github.com/shaiknavedahmed)
-- Built for Capstone Project at SR University.
+- **Aelishala Manoj** — [GitHub](https://github.com/Manoj-alishala)
+- **Mittapalli Yashaswini** — [GitHub](GITHUB_URL)
+
+**Project Guide:** Mentor Name
+
+**Institution:** SR University – School of Computer Science & AI
+
+Built as part of the Capstone Project.
+
 
 ---
 
